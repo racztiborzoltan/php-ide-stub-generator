@@ -1,0 +1,21 @@
+{
+    "name": "racztiborzoltan/ide-stub-generator",
+    "description": "PHP stub file generator",
+    "license": "IS",
+    "authors": [
+        {
+            "name": "Rácz Tibor Zoltán",
+            "email": "racztiborzoltan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "require": {
+
+    },
+    "require-dev": {
+		"monolog/monolog": "1.*"
+    }
+}

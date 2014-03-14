@@ -1,0 +1,10 @@
+# Eclipse project meta files
+.settings
+.buildpath
+.project
+
+# temp directory
+/temp/*
+
+# Composer
+/vendor/
