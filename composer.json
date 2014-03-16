@@ -1,7 +1,7 @@
 {
     "name": "racztiborzoltan/ide-stub-generator",
     "description": "PHP stub file generator",
-    "license": "IS",
+    "license": "ISC",
     "authors": [
         {
             "name": "Rácz Tibor Zoltán",
