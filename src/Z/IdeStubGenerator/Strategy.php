@@ -12,6 +12,13 @@ abstract class Strategy
     const DS = DIRECTORY_SEPARATOR;
 
     /**
+     * Namespace speratator character
+     *
+     * @var string
+     */
+    const NS = '\\';
+
+    /**
      * Constant for new line character
      *
      * @var string
@@ -25,7 +32,7 @@ abstract class Strategy
      */
     const TAB = "\t";
 
-    abstract public function generate(array $classes);
+    abstract public function generate(array $classes, array $functions, array $constants);
 
     protected function getPHPBegin()
     {
@@ -43,7 +50,7 @@ abstract class Strategy
 
     protected function getNamespaceOfClassName($class_name)
     {
-        return substr($class_name, 0, strrpos($class_name, '\\'));
+        return substr($class_name, 0, strrpos($class_name, self::NS));
     }
 
     protected function getClassStubString($class_name)
@@ -52,12 +59,12 @@ abstract class Strategy
         $refl = new \ReflectionClass($class_name);
         $class_name = $refl->getName();
         $namespace = $this->getNamespaceOfClassName($class_name);
-        $just_class_name = str_replace($namespace . '\\', '', $class_name);
+        $just_class_name = str_replace($namespace . self::NS, '', $class_name);
         $doccomment = $refl->getDocComment();
         $php .= self::NL . $doccomment . self::NL;
         $php .= 'class ' . $just_class_name;
         if ($parent = $refl->getParentClass()) {
-            $php .= ' extends \\' . $parent->getName();
+            $php .= ' extends ' . self::NS . $parent->getName();
         }
         $php .= self::NL . '{' . self::NL;
         foreach ($refl->getProperties() as $property) {
@@ -91,18 +98,17 @@ abstract class Strategy
                     }
                     try {
                         if ($typehint = $parameter->getClass()) {
-                            $php .= '\\'.$typehint->getName() . ' ';
+                            $php .= self::NS . $typehint->getName() . ' ';
                         }
                     } catch (\ReflectionException $e) {
                         $parse = explode(' ', $e->getMessage());
-                        $php .= '\\' . $parse[1] . ' ';
+                        $php .= self::NS . $parse[1] . ' ';
                     }
                     $php .= '$' . $parameter->getName();
                     if ($parameter->isDefaultValueAvailable()) {
                         if ($parameter->isDefaultValueConstant()) {
                             $defaultValue = preg_replace('#\n|\r\n|\r#', ' ', var_export($parameter->getDefaultValueConstantName(), true));
-                        }
-                        else {
+                        } else {
                             $defaultValue = preg_replace('#\n|\r\n|\r#', ' ', var_export($parameter->getDefaultValue(), true));
                         }
                         $php .= ' = ' . $defaultValue;
@@ -114,18 +120,94 @@ abstract class Strategy
         // Close class ... { ...
         $php .= '}';
 
-        // Each line indent with a TAB:
-        $lines = explode(self::NL, $php);
+        return $php;
+    }
+
+    /**
+     * Get an namespace block with content
+     *
+     * @param string $namespace_name
+     * @param string $block_content
+     *            Content of namespace block
+     * @return string generated string
+     */
+    protected function getNamespaceBlock($namespace_name, $block_content)
+    {
+        // Each line indent with a TAB in the block content:
+        $lines = explode(self::NL, $block_content);
         foreach ($lines as $key => $line)
             $lines[$key] = self::TAB . $line;
-        $php = implode(self::NL, $lines);
+        $block_content = implode(self::NL, $lines);
 
-        // Namespace check:
-        if ($namespace == '') {
-            $php = 'namespace {' . $php . self::NL . '}' . self::NL;
-        } else {
-            $php = 'namespace ' . $namespace . '{' . $php . self::NL . '}' . self::NL;
+        $php = 'namespace ';
+        if ($namespace_name != '') {
+            $php .= $namespace_name;
         }
+        $php .= '{' . $block_content . self::NL . '}' . self::NL;
+
+        return $php;
+    }
+
+    /**
+     * Get stub string of a function name
+     *
+     * @param string $function_name
+     * @param bool $without_namespace
+     * @return string
+     */
+    protected function getFunctionStubString($function_name, $without_namespace = true)
+    {
+        $refl = new \ReflectionFunction($function_name);
+        if ($without_namespace)
+            $function_name = $refl->getShortName();
+        $php = '';
+        $php .= self::NL . $refl->getDocComment() . self::NL;
+        $php .= 'function ' . $function_name . '(';
+        foreach ($refl->getParameters() as $i => $parameter) {
+            if ($i >= 1) {
+                $php .= ', ';
+            }
+            if ($typehint = $parameter->getClass()) {
+                $php .= $typehint->getName() . ' ';
+            }
+            $php .= '$' . $parameter->getName();
+            if ($parameter->isDefaultValueAvailable()) {
+                if ($parameter->isDefaultValueConstant()) {
+                    $defaultValue = preg_replace('#\n|\r\n|\r#', ' ', var_export($parameter->getDefaultValueConstantName(), true));
+                } else {
+                    $defaultValue = preg_replace('#\n|\r\n|\r#', ' ', var_export($parameter->getDefaultValue(), true));
+                }
+                $php .= ' = ' . $defaultValue;
+            }
+        }
+        $php .= ') {}' . self::NL;
+
+        return $php;
+    }
+
+    protected function getConstantStubString($constant_name, $constant_value)
+    {
+        $constant_name = var_export((string)$constant_name, true);
+        switch (gettype($constant_value))
+        {
+        	case 'boolean':
+        	    $constant_value = (bool)$constant_value ? 'true' : 'false';
+        	    break;
+        	case 'integer':
+        	    $constant_value = (int)$constant_value;
+        	    break;
+        	case 'double':
+        	case 'float':
+        	    $constant_value = (float)$constant_value;
+        	    break;
+        	case 'string':
+        	    $constant_value = var_export((string)$constant_value, true);
+        	    break;
+        	default: return '';
+        }
+
+        $php = '';
+        $php .= 'define(' . $constant_name . ', ' . $constant_value . ');' . self::NL;
 
         return $php;
     }

@@ -1,5 +1,7 @@
 <?php
-
+// ============================================================================
+// Functions for this example:
+//
 // -----------------------------------------------
 function getDefinedClasses()
 {
@@ -23,9 +25,45 @@ function getDefinedClasses()
     return array_keys($classes);
 }
 // -----------------------------------------------
+function getDefinedFunctions()
+{
+    $functions = get_defined_functions();
+    $functions = $functions['user'];
+    foreach ($functions as $key => $function_name)
+    {
+        $refl = new ReflectionFunction($function_name);
+        $function_name = $refl->getName();
+
+        if (strpos(strtolower($function_name), 'composer')!==false
+            || $refl->getFileName() === __FILE__
+            )
+            unset($functions[$key]);
+        else
+            $functions[$key] = $function_name;
+    }
+
+    return $functions;
+}
+function getDefinedConstants()
+{
+    $constants = get_defined_constants(true);
+    $constants = $constants['user'];
+    return $constants;
+}
+// -----------------------------------------------
+// ============================================================================
+
+header('Content-Type: text/plain');
 
 // load Composer autoloader:
 require_once 'vendor/autoload.php';
+
+define('TEST_INT', 100);
+define('TEST_BOOL', true);
+define('TEST_BOOL_2', false);
+define('TEST_DOUBLE', 10.234);
+define('TEST_STRING', 'ASDFGHdfgh');
+define('TEST_NULL', null);
 
 // -----------------------------------------------
 // Example 1:
@@ -33,9 +71,13 @@ require_once 'vendor/autoload.php';
 //
 $stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\PSR0();
 $stubgenerator_strategy->setBaseDir(__DIR__.'/temp');
+$stubgenerator_strategy->setFunctionsStubFileName('functions.stub.php');
+$stubgenerator_strategy->setConstantsStubFileName('constants.stub.php');
 
 $generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
 $generator->addClasses(getDefinedClasses());
+$generator->addFunctions(getDefinedFunctions());
+$generator->addConstants(getDefinedConstants());
 $generator->generate();
 // -----------------------------------------------
 
@@ -44,10 +86,15 @@ $generator->generate();
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
 $stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\OneFile();
-$stubgenerator_strategy->setFilePath(__DIR__.'/temp/example_stub.php');
+$stubgenerator_strategy->setFilePath(__DIR__.'/temp/example_onefile_stub.php');
 
 
 $generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
 $generator->addClasses(getDefinedClasses());
+$generator->addFunctions(getDefinedFunctions());
+$generator->addConstants(getDefinedConstants());
 $generator->generate();
 // -----------------------------------------------
+
+echo PHP_EOL;echo PHP_EOL;
+echo 'End of example!!!';
