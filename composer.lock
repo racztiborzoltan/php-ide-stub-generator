@@ -3,23 +3,122 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a77e7c91edc7a7ad66e4c2b1b703ee8a",
+    "hash": "3e04d02ab6057e72e2ac47f66b1ac6d5",
     "packages": [
 
     ],
     "packages-dev": [
+        {
+            "name": "herrera-io/file-system-functions",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kherge-unmaintained/php-fs-functions.git",
+                "reference": "a558f4bce31d78c427f2071f4645cd2b30e9512c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kherge-unmaintained/php-fs-functions/zipball/a558f4bce31d78c427f2071f4645cd2b30e9512c",
+                "reference": "a558f4bce31d78c427f2071f4645cd2b30e9512c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/lib/fs_functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Herrera",
+                    "email": "kevin@herrera.io",
+                    "homepage": "http://kevin.herrera.io"
+                }
+            ],
+            "description": "A collection of file system related functions.",
+            "homepage": "http://code.herrera.io/php-fs-functions",
+            "keywords": [
+                "file",
+                "functions"
+            ],
+            "time": "2013-11-08 18:25:49"
+        },
+        {
+            "name": "lstrojny/functional-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lstrojny/functional-php.git",
+                "reference": "610abc50d7bb7a18c71c3f09e5c177ee0519639a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lstrojny/functional-php/zipball/610abc50d7bb7a18c71c3f09e5c177ee0519639a",
+                "reference": "610abc50d7bb7a18c71c3f09e5c177ee0519639a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Functional/_import.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lars Strojny",
+                    "email": "lstrojny@php.net",
+                    "homepage": "http://usrportage.de"
+                },
+                {
+                    "name": "Max Beutel",
+                    "email": "nash12@gmail.com"
+                }
+            ],
+            "description": "Functional primitives for PHP",
+            "keywords": [
+                "functional"
+            ],
+            "time": "2014-01-24 10:41:56"
+        },
         {
             "name": "monolog/monolog",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "dc75a998d83ebb285b94b1a6fd96644b457ed33c"
+                "reference": "db7e2aa311869aaf3c2cc76237b2beff05322629"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/dc75a998d83ebb285b94b1a6fd96644b457ed33c",
-                "reference": "dc75a998d83ebb285b94b1a6fd96644b457ed33c",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/db7e2aa311869aaf3c2cc76237b2beff05322629",
+                "reference": "db7e2aa311869aaf3c2cc76237b2beff05322629",
                 "shasum": ""
             },
             "require": {
@@ -74,7 +173,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2014-03-09 20:51:48"
+            "time": "2014-03-14 09:32:58"
         },
         {
             "name": "psr/log",
@@ -118,15 +217,58 @@
                 "psr-3"
             ],
             "time": "2014-01-18 15:33:09"
+        },
+        {
+            "name": "rutkoski/simplify-functions",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rutkoski/simplify-functions.git",
+                "reference": "ccc799e0f297fd48d9f75be54e148e35a9053d97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rutkoski/simplify-functions/zipball/ccc799e0f297fd48d9f75be54e148e35a9053d97",
+                "reference": "ccc799e0f297fd48d9f75be54e148e35a9053d97",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "authors": [
+                {
+                    "name": "Rodrigo Rutkoski Rodrigues",
+                    "email": "rutkoski@gmail.com"
+                }
+            ],
+            "description": "Simplify PHP Framework",
+            "homepage": "https://github.com/rutkoski/simplify-functions",
+            "keywords": [
+                "framework",
+                "php"
+            ],
+            "time": "2013-09-06 18:24:42"
         }
     ],
     "aliases": [
 
     ],
     "minimum-stability": "dev",
-    "stability-flags": [
-
-    ],
+    "stability-flags": {
+        "rutkoski/simplify-functions": 20,
+        "herrera-io/file-system-functions": 20,
+        "lstrojny/functional-php": 20
+    },
     "platform": [
 
     ],

@@ -16,6 +16,9 @@
 
     },
     "require-dev": {
-		"monolog/monolog": "1.*"
+		"monolog/monolog": "1.*",
+		"rutkoski/simplify-functions": "dev-master",
+		"herrera-io/file-system-functions": "1.0.*@dev",
+		"lstrojny/functional-php": "1.0.*@dev"
     }
 }
