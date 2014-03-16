@@ -1,5 +1,9 @@
 # PHP Ide Stub file Generator
 
+Simple stub file generator for development environments.
+
+Base idea: https://gist.github.com/ralphschindler/4757829
+
 ## Examples
 
 See the "example.php"!!!
