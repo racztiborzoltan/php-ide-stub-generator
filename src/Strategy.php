@@ -6,53 +6,60 @@ abstract class Strategy
 
     /**
      * constant for directory separator character
-     *
      * @var string
      */
     const DS = DIRECTORY_SEPARATOR;
 
     /**
      * Namespace speratator character
-     *
      * @var string
      */
     const NS = '\\';
 
     /**
      * Constant for new line character
-     *
      * @var string
      */
     const NL = "\n";
 
     /**
      * Constant for TAB character
-     *
      * @var string
      */
     const TAB = "\t";
 
+    /**
+     * Individual generation methodology
+     * @param array $classes
+     * @param array $functions
+     * @param array $constants
+     */
     abstract public function generate(array $classes, array $functions, array $constants);
 
+    /**
+     * Return begin of PHP files
+     * @return string
+     */
     protected function getPHPBegin()
     {
         return '<?php' . self::NL;
     }
 
-    protected function getHeader()
-    {
-        return '';
-        // $php = '';
-        // $php .= '/**' . self::NL . ' * Generated stub file for code completion purposes' . self::NL . ' */';
-        // $php .= self::NL . self::NL;
-        // return $php;
-    }
-
+    /**
+     * Return namespace of given class name
+     * @param string $class_name
+     * @return string
+     */
     protected function getNamespaceOfClassName($class_name)
     {
         return substr($class_name, 0, strrpos($class_name, self::NS));
     }
 
+    /**
+     * Return generated stub string by class_name
+     * @param string $class_name
+     * @return string
+     */
     protected function getClassStubString($class_name)
     {
         $php = '';
@@ -185,6 +192,12 @@ abstract class Strategy
         return $php;
     }
 
+    /**
+     * Return generated stub string by constant_name and constant value
+     * @param string $constant_name
+     * @param bool|int|float|string $constant_value
+     * @return string
+     */
     protected function getConstantStubString($constant_name, $constant_value)
     {
         $constant_name = var_export((string)$constant_name, true);

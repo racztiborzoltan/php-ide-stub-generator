@@ -143,8 +143,7 @@ class PSR0 extends Strategy
             foreach ($functions as $function_name) {
                 $temp_file_content .= $this->getFunctionStubString($function_name);
             }
-            $file_content .= $this->getNamespaceBlock($namespace_name, $temp_file_content);
-            $file_content .= self::NL . self::NL;
+            $file_content .= $this->getNamespaceBlock($namespace_name, $temp_file_content) . self::NL . self::NL;
         }
         file_put_contents($file_path, $file_content);
         // ---------------------------------------
