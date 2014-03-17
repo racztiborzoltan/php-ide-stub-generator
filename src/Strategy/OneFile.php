@@ -87,6 +87,11 @@ class OneFile extends Strategy
         }
         // ---------------------------------------
 
+        // Check directory of generated path:
+        $dirname = dirname($this->file_path);
+        if (! is_dir($dirname))
+            mkdir($dirname, 0755, true);
+
         // Write the generated content to the file:
         file_put_contents($this->file_path, $file_content);
     }
