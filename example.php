@@ -44,6 +44,7 @@ function getDefinedFunctions()
 
     return $functions;
 }
+// -----------------------------------------------
 function getDefinedConstants()
 {
     $constants = get_defined_constants(true);
