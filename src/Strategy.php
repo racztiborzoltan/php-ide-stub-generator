@@ -97,9 +97,20 @@ abstract class Strategy
                 }
                 $php .= $method->getName() . '(';
                 foreach ($method->getParameters() as $i => $parameter) {
-                    if ($i >= 1) {
-                        $php .= ', ';
+                    $parameter_name = $parameter->getName();
+                    if ($parameter_name === '...') {
+                        if ($i === 0) {
+                            $parameter_name = '/*'.$parameter_name.'*/';
+                        } else {
+                            $parameter_name = ' /*, '.$parameter_name.'*/';
+                        }
+                    } else {
+                        $parameter_name = '$' . $parameter_name;
+                        if ($i >= 1) {
+                            $php .= ', ';
+                        }
                     }
+                    file_put_contents('valami.log', $i.' - '.var_export($parameter_name, true).PHP_EOL, FILE_APPEND);
                     if ($parameter->isArray()) {
                         $php .= 'array ';
                     }
@@ -111,7 +122,7 @@ abstract class Strategy
                         $parse = explode(' ', $e->getMessage());
                         $php .= self::NS . $parse[1] . ' ';
                     }
-                    $php .= '$' . $parameter->getName();
+                    $php .= $parameter_name;
                     if ($parameter->isDefaultValueAvailable()) {
                         if ($parameter->isDefaultValueConstant()) {
                             $defaultValue = preg_replace('#\n|\r\n|\r#', ' ', var_export($parameter->getDefaultValueConstantName(), true));
