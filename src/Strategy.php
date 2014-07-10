@@ -110,7 +110,6 @@ abstract class Strategy
                             $php .= ', ';
                         }
                     }
-                    file_put_contents('valami.log', $i.' - '.var_export($parameter_name, true).PHP_EOL, FILE_APPEND);
                     if ($parameter->isArray()) {
                         $php .= 'array ';
                     }
