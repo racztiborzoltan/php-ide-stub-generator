@@ -75,6 +75,7 @@ abstract class Strategy
         }
         $php .= self::NL . '{' . self::NL;
         foreach ($refl->getProperties() as $property) {
+            $property_name = str_replace('$', '', $property->getName());
             $php .= self::TAB;
             if ($property->isPrivate())
                 $php .= 'private ';
@@ -84,7 +85,7 @@ abstract class Strategy
                 $php .= 'public ';
             if ($property->isStatic())
                 $php .= 'static ';
-            $php .= '$' . $property->getName() . ';' . self::NL;
+            $php .= '$' . $property_name . ';' . self::NL;
         }
         foreach ($refl->getMethods() as $method) {
             if ($method->isPublic()) {
