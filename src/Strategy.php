@@ -74,7 +74,12 @@ abstract class Strategy
             $php .= ' extends ' . self::NS . $parent->getName();
         }
         $php .= self::NL . '{' . self::NL;
+        $properties = array();
         foreach ($refl->getProperties() as $property) {
+            $properties[$property->getName()] = $property;
+        }
+        ksort($properties);
+        foreach ($properties as $property) {
             $property_name = str_replace('$', '', $property->getName());
             $php .= self::TAB;
             if ($property->isPrivate())
