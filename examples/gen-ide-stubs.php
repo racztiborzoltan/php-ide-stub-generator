@@ -5,7 +5,7 @@
 // -----------------------------------------------
 function getDefinedClasses()
 {
-    $temp = include 'vendor/composer/autoload_classmap.php';
+    $temp = include '../vendor/composer/autoload_classmap.php';
 
     if (empty($temp))
         exit('Please, use the follow command: composer dump-autoload -o');
@@ -57,7 +57,7 @@ function getDefinedConstants()
 header('Content-Type: text/plain');
 
 // load Composer autoloader:
-require_once 'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 define('TEST_INT', 100);
 define('TEST_BOOL', true);
@@ -71,7 +71,7 @@ define('TEST_NULL', null);
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
 $stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\PSR0();
-$stubgenerator_strategy->setBaseDir(__DIR__.'/temp');
+$stubgenerator_strategy->setBaseDir(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME));
 $stubgenerator_strategy->setFunctionsStubFileName('functions.stub.php');
 $stubgenerator_strategy->setConstantsStubFileName('constants.stub.php');
 
@@ -87,7 +87,7 @@ $generator->generate();
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
 $stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\OneFile();
-$stubgenerator_strategy->setFilePath(__DIR__.'/temp/example_onefile_stub.php');
+$stubgenerator_strategy->setFilePath(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/example_onefile_stub.php');
 
 
 $generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
