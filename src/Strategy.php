@@ -64,6 +64,7 @@ abstract class Strategy
     {
         $php = '';
         $refl = new \ReflectionClass($class_name);
+
         $class_name = $refl->getName();
         $namespace = $this->getNamespaceOfClassName($class_name);
         $just_class_name = str_replace($namespace . self::NS, '', $class_name);
@@ -74,6 +75,13 @@ abstract class Strategy
             $php .= ' extends ' . self::NS . $parent->getName();
         }
         $php .= self::NL . '{' . self::NL;
+
+        $constants = $refl->getConstants() ;
+        ksort($constants);
+        foreach ($constants as $constant_name => $constant_value) {
+            $php .= self::TAB . 'const ' . $constant_name . ' = '.var_export($constant_value, true).';' . self::NL;
+        }
+
         $properties = array();
         foreach ($refl->getProperties() as $property) {
             $properties[$property->getName()] = $property;
@@ -92,6 +100,7 @@ abstract class Strategy
                 $php .= 'static ';
             $php .= '$' . $property_name . ';' . self::NL;
         }
+
         $methods = array();
         foreach ($refl->getMethods() as $method) {
             $methods[$method->getName()] = $method;
