@@ -87,7 +87,12 @@ abstract class Strategy
                 $php .= 'static ';
             $php .= '$' . $property_name . ';' . self::NL;
         }
+        $methods = array();
         foreach ($refl->getMethods() as $method) {
+            $methods[$method->getName()] = $method;
+        }
+        ksort($methods);
+        foreach ($methods as $method) {
             if ($method->isPublic()) {
                 if ($method->getDocComment()) {
                     $php .= self::TAB . $method->getDocComment() . self::NL;
