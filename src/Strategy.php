@@ -69,7 +69,9 @@ abstract class Strategy
         $namespace = $this->getNamespaceOfClassName($class_name);
         $just_class_name = str_replace($namespace . self::NS, '', $class_name);
         $doccomment = $refl->getDocComment();
-        $php .= self::NL . $doccomment . self::NL;
+        if ($doccomment) {
+            $php .= self::NL . $doccomment . self::NL;
+        }
         $php .= 'class ' . $just_class_name;
         if ($parent = $refl->getParentClass()) {
             $php .= ' extends ' . self::NS . $parent->getName();
