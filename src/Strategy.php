@@ -119,7 +119,7 @@ abstract class Strategy
                 }
                 $php .= $method->getName() . '(';
                 foreach ($method->getParameters() as $i => $parameter) {
-                    $parameter_name = $parameter->getName();
+                    $parameter_name = $this->getMethodParameterName($parameter);
                     if ($parameter_name === '...') {
                         if ($i === 0) {
                             $parameter_name = '/*'.$parameter_name.'*/';
@@ -160,6 +160,17 @@ abstract class Strategy
         $php .= '}';
 
         return $php;
+    }
+
+    /**
+     * Get name of parameter of method
+     *
+     * @param \ReflectionParameter $parameter
+     * @return string
+     */
+    protected function getMethodParameterName(\ReflectionParameter $parameter)
+    {
+        return $parameter->getName();
     }
 
     /**
