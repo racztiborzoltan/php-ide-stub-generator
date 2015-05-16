@@ -1,9 +1,9 @@
 <?php
 namespace Z\IdeStubGenerator\Strategy;
 
-use Z\IdeStubGenerator\Strategy;
+use Z\IdeStubGenerator\Generator;
 
-class OneFile extends Strategy
+class OneFile extends Generator
 {
 
     /**
@@ -44,7 +44,7 @@ class OneFile extends Strategy
     /*
      * (non-PHPdoc) @see \Z\IdeStubGenerator\StrategyInterface::generate()
      */
-    public function generate(array $classes, array $functions, array $constants)
+    protected function _generate()
     {
         // Check the file path:
         $this->getFilePath();
@@ -53,6 +53,7 @@ class OneFile extends Strategy
 
         // ---------------------------------------
         // Process the constants:
+        $constants = $this->getConstants();
         $file_content .= self::NL;
         foreach ($constants as $constant_name => $constant_value) {
             $file_content .= $this->getConstantStubString($constant_name, $constant_value);
@@ -64,6 +65,7 @@ class OneFile extends Strategy
         // Process the functions:
         //
         // Separate the functions based on namespaces:
+        $functions = $this->getFunctions();
         $functions_by_namespace = array();
         foreach ($functions as $function_name) {
             $refl = new \ReflectionFunction($function_name);
@@ -82,6 +84,7 @@ class OneFile extends Strategy
         // ---------------------------------------
         // Process the classes:
         //
+        $classes = $this->getClasses();
         foreach ($classes as $class_name) {
             $file_content .= $this->getNamespaceBlock($this->getNamespaceOfClassName($class_name), $this->getClassStubString($class_name));
         }

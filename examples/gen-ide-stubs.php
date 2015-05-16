@@ -70,15 +70,14 @@ define('TEST_NULL', null);
 // Example 1:
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
-$stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\PSR0();
-$stubgenerator_strategy->setBaseDir(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME));
-$stubgenerator_strategy->setFunctionsStubFileName('functions.stub.php');
-$stubgenerator_strategy->setConstantsStubFileName('constants.stub.php');
+$generator = new Z\IdeStubGenerator\Strategy\PSR0();
+$generator->setBaseDir(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME));
+$generator->setFunctionsStubFileName('functions.stub.php');
+$generator->setConstantsStubFileName('constants.stub.php');
 
-$generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
-$generator->addClasses(getDefinedClasses());
-$generator->addFunctions(getDefinedFunctions());
-$generator->addConstants(getDefinedConstants());
+$generator->setClasses(getDefinedClasses());
+$generator->setFunctions(getDefinedFunctions());
+$generator->setConstants(getDefinedConstants());
 $generator->generate();
 // -----------------------------------------------
 
@@ -86,14 +85,12 @@ $generator->generate();
 // Example 2:
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
-$stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\OneFile();
-$stubgenerator_strategy->setFilePath(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/example_onefile_stub.php');
+$generator = new Z\IdeStubGenerator\Strategy\OneFile();
+$generator->setFilePath(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/example_onefile_stub.php');
 
-
-$generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
-$generator->addClasses(getDefinedClasses());
-$generator->addFunctions(getDefinedFunctions());
-$generator->addConstants(getDefinedConstants());
+$generator->setClasses(getDefinedClasses());
+$generator->setFunctions(getDefinedFunctions());
+$generator->setConstants(getDefinedConstants());
 $generator->generate();
 // -----------------------------------------------
 

@@ -36,15 +36,15 @@ if (!empty($extension_version)) {
 // Example 1:
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
-$stubgenerator_strategy = new Custom_PSR0();
-$stubgenerator_strategy->setBaseDir(__DIR__.'/../temp/'.$full_extension_name);
-$stubgenerator_strategy->setFunctionsStubFileName('functions.stub.php');
-$stubgenerator_strategy->setConstantsStubFileName('constants.stub.php');
+$generator = new Custom_PSR0();
 
-$generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
-$generator->addClasses(getDefinedClasses($extension_name));
-$generator->addFunctions(getDefinedFunctions($extension_name));
-$generator->addConstants(getDefinedConstants($extension_name));
+$generator->setBaseDir(__DIR__.'/../temp/'.$full_extension_name);
+$generator->setFunctionsStubFileName('functions.stub.php');
+$generator->setConstantsStubFileName('constants.stub.php');
+
+$generator->setClasses(getDefinedClasses($extension_name));
+$generator->setFunctions(getDefinedFunctions($extension_name));
+$generator->setConstants(getDefinedConstants($extension_name));
 $generator->generate();
 // -----------------------------------------------
 
@@ -52,14 +52,13 @@ $generator->generate();
 // Example 2:
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
-$stubgenerator_strategy = new Custom_OneFile();
-$stubgenerator_strategy->setFilePath(__DIR__.'/../temp/'.$full_extension_name.'_onefile_stub.php');
+$generator = new Custom_OneFile();
+$generator->setFilePath(__DIR__.'/../temp/'.$full_extension_name.'_onefile_stub.php');
 
 
-$generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
-$generator->addClasses(getDefinedClasses($extension_name));
-$generator->addFunctions(getDefinedFunctions($extension_name));
-$generator->addConstants(getDefinedConstants($extension_name));
+$generator->setClasses(getDefinedClasses($extension_name));
+$generator->setFunctions(getDefinedFunctions($extension_name));
+$generator->setConstants(getDefinedConstants($extension_name));
 $generator->generate();
 // -----------------------------------------------
 

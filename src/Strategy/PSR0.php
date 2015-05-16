@@ -1,9 +1,9 @@
 <?php
 namespace Z\IdeStubGenerator\Strategy;
 
-use Z\IdeStubGenerator\Strategy;
+use Z\IdeStubGenerator\Generator;
 
-class PSR0 extends Strategy
+class PSR0 extends Generator
 {
 
     /**
@@ -99,10 +99,12 @@ class PSR0 extends Strategy
     /*
      * (non-PHPdoc) @see \Z\IdeStubGenerator\StrategyInterface::generate()
      */
-    public function generate(array $classes, array $functions, array $constants)
+    protected function _generate()
     {
         // Check the base directory:
         $this->getBaseDir();
+
+        $classes = $this->getClasses();
 
         // ---------------------------------------
         // Process the classes:
@@ -129,6 +131,7 @@ class PSR0 extends Strategy
         // ---------------------------------------
         // Process the functions:
         //
+        $functions = $this->getFunctions();
         $file_path = $this->basedir . self::DS . $this->getFunctionsStubFileName();
         $file_content = $this->getPHPBegin();
         // Separate the functions based on namespaces:
@@ -150,6 +153,7 @@ class PSR0 extends Strategy
 
         // ---------------------------------------
         // Process the constants:
+        $constants = $this->getConstants();
         $file_path = $this->basedir . self::DS . $this->getConstantsStubFileName();
         $file_content = $this->getPHPBegin();
         foreach ($constants as $constant_name => $constant_value) {
