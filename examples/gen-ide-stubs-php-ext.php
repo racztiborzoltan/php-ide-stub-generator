@@ -52,7 +52,7 @@ if (!empty($extension_version)) {
 //
 $generator = new Z\IdeStubGenerator\Strategy\PSR0();
 
-$generator->setBaseDir(__DIR__.'/../temp/'.$full_extension_name);
+$generator->setBaseDir(__DIR__.'/../temp/'.$full_extension_name.'/');
 $generator->setFunctionsStubFileName('functions.stub.php');
 $generator->setConstantsStubFileName('constants.stub.php');
 

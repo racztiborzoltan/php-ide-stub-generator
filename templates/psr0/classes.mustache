@@ -1,0 +1,34 @@
+{{%FILTERS}}
+<?php
+{{# class }}
+namespace {{ namespace }}{
+
+{{# doccomment }}
+{{{ . | indent.tab_1 }}}
+{{/ doccomment }}
+	{{class_keyword}} {{short_name}}{{#extends}} extends {{.}}{{/extends}}{{#implements_string}} implements {{.}}{{/implements_string}}
+	{
+	{{# .constants }}
+	    const {{name}} = {{value}};
+
+	{{/ .constants }}
+
+	{{# properties }}
+{{# doccomment }}
+{{{ . | indent.tab_2 }}}
+{{/ doccomment }}
+		{{#scope}}{{.}} {{/scope}}${{ name }}{{#value}} = {{{.}}}{{/value}};
+
+	{{/ properties }}
+
+	{{# methods }}
+
+{{# doccomment }}
+{{{ . | indent.tab_2 }}}
+{{/ doccomment }}
+		function {{#returnsReference}}&{{/returnsReference}}{{ name }}({{# parameters}}{{#typeHint}}{{.}} {{/typeHint}}${{ name }}{{#defaultValue}} = {{.}}{{/defaultValue}}{{#comma}}, {{/comma}}{{/ parameters}}){}
+	{{/ methods }}
+
+	}
+}
+{{/ class }}

@@ -71,7 +71,7 @@ define('TEST_NULL', null);
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
 $generator = new Z\IdeStubGenerator\Strategy\PSR0();
-$generator->setBaseDir(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME));
+$generator->setBaseDir(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/');
 $generator->setFunctionsStubFileName('functions.stub.php');
 $generator->setConstantsStubFileName('constants.stub.php');
 

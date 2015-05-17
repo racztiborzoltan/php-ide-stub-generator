@@ -1,0 +1,64 @@
+{{%FILTERS}}
+<?php
+namespace {
+	{{# constants }}
+	define({{ name }}, {{ value}});
+	{{/ constants }}
+}
+
+
+
+{{# functions_by_namespace }}
+{{# namespaces }}
+namespace {{ name }}{
+{{# functions }}
+
+{{# doccomment }}
+{{{ . | indent.tab_1 }}}
+{{/ doccomment }}
+	function {{#returnsReference}}&{{/returnsReference}}{{ short_name }}({{# parameters}}{{#typeHint}}{{.}} {{/typeHint}}${{ name }}{{#defaultValue}} = {{.}}{{/defaultValue}}{{#comma}}, {{/comma}}{{/ parameters}}){};
+{{/ functions }}
+} {{! namespace closing brace }}
+
+{{/ namespaces }}
+
+
+
+{{/ functions_by_namespace }}
+{{# classes_by_namespace }}
+{{# namespaces }}
+namespace {{ name }}{
+{{# classes }}
+
+{{# doccomment }}
+{{{ . | indent.tab_1 }}}
+{{/ doccomment }}
+	{{class_keyword}} {{short_name}}{{#extends}} extends {{.}}{{/extends}}{{#implements_string}} implements {{.}}{{/implements_string}}
+	{
+	{{# .constants }}
+	    const {{name}} = {{value}};
+
+	{{/ .constants }}
+
+	{{# properties }}
+{{# doccomment }}
+{{{ . | indent.tab_2 }}}
+{{/ doccomment }}
+		{{#scope}}{{.}} {{/scope}}${{ name }}{{#value}} = {{{.}}}{{/value}};
+
+	{{/ properties }}
+
+	{{# methods }}
+
+{{# doccomment }}
+{{{ . | indent.tab_2 }}}
+{{/ doccomment }}
+		function {{#returnsReference}}&{{/returnsReference}}{{ name }}({{# parameters}}{{#typeHint}}{{.}} {{/typeHint}}${{ name }}{{#defaultValue}} = {{.}}{{/defaultValue}}{{#comma}}, {{/comma}}{{/ parameters}}){}
+	{{/ methods }}
+
+	}
+{{/ classes }}
+} {{! namespace closing brace }}
+
+{{/ namespaces }}
+{{/ classes_by_namespace }}

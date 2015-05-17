@@ -14,16 +14,12 @@ class OneFile extends Generator
      */
     protected $file_path = null;
 
-    /**
-     * Base directory for generated files
-     * Default: WORKING_DIRECTORY/ide-stub/
-     *
-     * @var string
-     */
-    protected $basedir = null;
-
     public function setFilePath($file_path)
     {
+        if (empty($file_path)) {
+            throw new \InvalidArgumentException('Path of file is empty!');
+        }
+
         $this->file_path = $file_path;
     }
 
@@ -35,67 +31,70 @@ class OneFile extends Generator
     public function getFilePath()
     {
         if (empty($this->file_path)) {
-            $this->setFilePath(getcwd() . self::DS . 'ide-stub' . self::DS . 'stub.php');
+            throw new \UnderflowException('Value of base directory is empty!');
         }
 
         return $this->file_path;
     }
 
-    /*
-     * (non-PHPdoc) @see \Z\IdeStubGenerator\StrategyInterface::generate()
+    /**
+     * (non-PHPdoc)
+     * @see \Z\IdeStubGenerator\Generator::_generate()
      */
     protected function _generate()
     {
-        // Check the file path:
-        $this->getFilePath();
+        $file_path = $this->getFilePath();
 
-        $file_content = $this->getPHPBegin();
-
-        // ---------------------------------------
-        // Process the constants:
-        $constants = $this->getConstants();
-        $file_content .= self::NL;
-        foreach ($constants as $constant_name => $constant_value) {
-            $file_content .= $this->getConstantStubString($constant_name, $constant_value);
+        // Check directory of generated path:
+        $dirname = dirname($file_path);
+        if (! is_dir($dirname)) {
+            mkdir($dirname, 0755, true);
         }
-        $file_content .= self::NL;
-        // ---------------------------------------
+
+        $template_variables = $this->getTemplateVariables();
 
         // ---------------------------------------
         // Process the functions:
         //
-        // Separate the functions based on namespaces:
-        $functions = $this->getFunctions();
+        // Separate the functions, based on namespaces:
         $functions_by_namespace = array();
-        foreach ($functions as $function_name) {
-            $refl = new \ReflectionFunction($function_name);
-            $namespace = $refl->getNamespaceName();
-            $functions_by_namespace[$namespace][$function_name] = $function_name;
+        foreach ($template_variables['functions'] as $function_info) {
+            $namespace = $function_info['namespace'];
+            $functions_by_namespace[$namespace][] = $function_info;
         }
-        foreach ($functions_by_namespace as $namespace_name => $functions) {
-            $temp_file_content = '';
-            foreach ($functions as $function_name) {
-                $temp_file_content .= $this->getFunctionStubString($function_name);
-            }
-            $file_content .= $this->getNamespaceBlock($namespace_name, $temp_file_content) . self::NL . self::NL;
+        foreach (array_keys($functions_by_namespace) as $namespace) {
+            $template_variables['functions_by_namespace']['namespaces'][] = array(
+                'name' => $namespace,
+                'functions' => $functions_by_namespace[$namespace],
+            );
         }
         // ---------------------------------------
 
         // ---------------------------------------
         // Process the classes:
         //
-        $classes = $this->getClasses();
-        foreach ($classes as $class_name) {
-            $file_content .= $this->getNamespaceBlock($this->getNamespaceOfClassName($class_name), $this->getClassStubString($class_name));
+        // Separate the classes, based on namespaces:
+        $classes_by_namespace = array();
+        foreach ($template_variables['classes'] as $class_info) {
+            $namespace = $class_info['namespace'];
+            $classes_by_namespace[$namespace][] = $class_info;
+        }
+        foreach (array_keys($classes_by_namespace) as $namespace) {
+            $template_variables['classes_by_namespace']['namespaces'][] = array(
+                'name' => $namespace,
+                'classes' => $classes_by_namespace[$namespace],
+            );
         }
         // ---------------------------------------
 
-        // Check directory of generated path:
-        $dirname = dirname($this->file_path);
-        if (! is_dir($dirname))
-            mkdir($dirname, 0755, true);
+        $m = $this->createMustacheEngine();
+        $template_path = realpath(__DIR__.'/../../templates/onefile/onefile.mustache');
+        if (empty($template_path)) {
+            throw new \UnexpectedValueException('Template path is not exists!');
+        }
+        $template_content = file_get_contents($template_path);
+        $rendered = $m->render($template_content, $template_variables);
 
-        // Write the generated content to the file:
-        file_put_contents($this->file_path, $file_content);
+        file_put_contents($file_path, $rendered);
     }
 }

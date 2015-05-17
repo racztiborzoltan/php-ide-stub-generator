@@ -1,0 +1,16 @@
+{{%FILTERS}}
+<?php
+{{# functions_by_namespace }}
+{{# namespaces }}
+namespace {{ name }}{
+{{# functions }}
+
+{{# doccomment }}
+{{{ . | indent.tab_1 }}}
+{{/ doccomment }}
+	function {{#returnsReference}}&{{/returnsReference}}{{ short_name }}({{# parameters}}{{#typeHint}}{{.}} {{/typeHint}}${{ name }}{{#defaultValue}} = {{.}}{{/defaultValue}}{{#comma}}, {{/comma}}{{/ parameters}}){};
+{{/ functions }}
+} {{! namespace closing brace }}
+
+{{/ namespaces }}
+{{/ functions_by_namespace }}

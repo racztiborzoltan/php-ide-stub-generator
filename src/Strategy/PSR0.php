@@ -12,7 +12,7 @@ class PSR0 extends Generator
      *
      * @var string
      */
-    protected $basedir = null;
+    private $basedir = null;
 
     /**
      * The file name that will contain the functions.
@@ -20,7 +20,7 @@ class PSR0 extends Generator
      *
      * @var string
      */
-    protected $functions_file_name = 'functions.php';
+    private $functions_file_name = 'functions.php';
 
     /**
      * The file name will contain the constants
@@ -28,16 +28,16 @@ class PSR0 extends Generator
      *
      * @var string
      */
-    protected $constants_file_name = 'constants.php';
+    private $constants_file_name = 'constants.php';
 
     public function setBaseDir($basedir)
     {
+        $basedir = str_replace('\\', '/', $basedir);
+        if ($basedir[strlen($basedir)-1] !== '/') {
+            throw new \InvalidArgumentException('Trailing slash is important!');
+        }
+
         $this->basedir = $basedir;
-        if (! in_array($this->basedir[strlen($this->basedir) - 1], array(
-            '\\',
-            '/'
-        )))
-            $this->basedir .= self::DS;
     }
 
     /**
@@ -48,7 +48,7 @@ class PSR0 extends Generator
     public function getBaseDir()
     {
         if (empty($this->basedir)) {
-            $this->setBaseDir(getcwd() . self::DS . 'ide-stub' . self::DS);
+            throw new \UnderflowException('Value of base directory is empty!');
         }
 
         return $this->basedir;
@@ -96,70 +96,120 @@ class PSR0 extends Generator
         return $this->constants_file_name;
     }
 
-    /*
-     * (non-PHPdoc) @see \Z\IdeStubGenerator\StrategyInterface::generate()
+    /**
+     * (non-PHPdoc)
+     * @see \Z\IdeStubGenerator\Generator::_generate()
      */
     protected function _generate()
     {
-        // Check the base directory:
-        $this->getBaseDir();
+        $basedir = $this->getBaseDir();
+        if (!is_dir($basedir)) {
+            mkdir($basedir, 0755, true);
+        }
 
-        $classes = $this->getClasses();
+        $this->_generateClasses();
+        $this->_generateFunctions();
+        $this->_generateConstants();
+    }
 
+    private function _generateClasses()
+    {
+        $template_variables = $this->getTemplateVariables();
         // ---------------------------------------
         // Process the classes:
         //
-        foreach ($classes as $class_name) {
-            // Calculate the generated file path:
-            $file_path = $this->basedir . '/' . str_replace(array(
+        foreach ($template_variables['classes'] as $class_info) {
+            $class_name = $class_info['name'];
+
+            $class_path = str_replace(array(
                 '\\',
                 '_'
-            ), '/', $class_name) . '.php';
+            ), '/', $class_name);
 
-            $file_content = $this->getPHPBegin() . $this->getNamespaceBlock($this->getNamespaceOfClassName($class_name), $this->getClassStubString($class_name));
+            // Calculate the generated file path:
+            $file_path = $this->getBaseDir() . '/' . $class_path . '.php';
+            $file_path = str_replace('//', '/', $file_path);
 
             // Check directory of generated path:
             $dirname = dirname($file_path);
-            if (! is_dir($dirname))
+            if (! is_dir($dirname)) {
                 mkdir($dirname, 0755, true);
+            }
 
-                // Write the generated content to the file:
-            file_put_contents($file_path, $file_content);
+            $template_variables['class'] = $class_info;
+
+            // Generate file content:
+            $m = $this->createMustacheEngine();
+            $template_path = realpath(__DIR__.'/../../templates/psr0/classes.mustache');
+            if (empty($template_path)) {
+                throw new \UnexpectedValueException('Template path is not exists!');
+            }
+            $template_content = file_get_contents($template_path);
+            $rendered = $m->render($template_content, $template_variables);
+
+            // Write file content:
+            file_put_contents($file_path, $rendered);
+
         }
         // ---------------------------------------
+    }
 
+    /**
+     * Generate ide stubs for functions
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function _generateFunctions()
+    {
+        $template_variables = $this->getTemplateVariables();
         // ---------------------------------------
         // Process the functions:
         //
-        $functions = $this->getFunctions();
-        $file_path = $this->basedir . self::DS . $this->getFunctionsStubFileName();
-        $file_content = $this->getPHPBegin();
-        // Separate the functions based on namespaces:
+        // Separate the functions, based on namespaces:
         $functions_by_namespace = array();
-        foreach ($functions as $function_name) {
-            $refl = new \ReflectionFunction($function_name);
-            $namespace = $refl->getNamespaceName();
-            $functions_by_namespace[$namespace][$function_name] = $function_name;
+        foreach ($template_variables['functions'] as $function_info) {
+            $namespace = $function_info['namespace'];
+            $functions_by_namespace[$namespace][] = $function_info;
         }
-        foreach ($functions_by_namespace as $namespace_name => $functions) {
-            $temp_file_content = '';
-            foreach ($functions as $function_name) {
-                $temp_file_content .= $this->getFunctionStubString($function_name);
-            }
-            $file_content .= $this->getNamespaceBlock($namespace_name, $temp_file_content) . self::NL . self::NL;
+        foreach (array_keys($functions_by_namespace) as $namespace) {
+            $template_variables['functions_by_namespace']['namespaces'][] = array(
+                'name' => $namespace,
+                'functions' => $functions_by_namespace[$namespace],
+            );
         }
-        file_put_contents($file_path, $file_content);
-        // ---------------------------------------
 
+        $file_path = $this->basedir . '/' . $this->getFunctionsStubFileName();
+        $m = $this->createMustacheEngine();
+        $template_path = realpath(__DIR__.'/../../templates/psr0/functions.mustache');
+        if (empty($template_path)) {
+            throw new \UnexpectedValueException('Template path is not exists!');
+        }
+        $template_content = file_get_contents($template_path);
+        $rendered = $m->render($template_content, $template_variables);
+        file_put_contents($file_path, $rendered);
+        // ---------------------------------------
+    }
+
+    /**
+     * Generate ide stubs for constants
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function _generateConstants()
+    {
+        $template_variables = $this->getTemplateVariables();
         // ---------------------------------------
         // Process the constants:
-        $constants = $this->getConstants();
-        $file_path = $this->basedir . self::DS . $this->getConstantsStubFileName();
-        $file_content = $this->getPHPBegin();
-        foreach ($constants as $constant_name => $constant_value) {
-            $file_content .= $this->getConstantStubString($constant_name, $constant_value);
+        //
+        $file_path = $this->basedir . '/' . $this->getConstantsStubFileName();
+        $m = $this->createMustacheEngine();
+        $template_path = realpath(__DIR__.'/../../templates/psr0/constants.mustache');
+        if (empty($template_path)) {
+            throw new \UnexpectedValueException('Template path is not exists!');
         }
-        file_put_contents($file_path, $file_content);
+        $template_content = file_get_contents($template_path);
+        $rendered = $m->render($template_content, $template_variables);
+        file_put_contents($file_path, $rendered);
         // ---------------------------------------
     }
 }
