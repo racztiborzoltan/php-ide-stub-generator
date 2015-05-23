@@ -6,37 +6,36 @@ Base idea: https://gist.github.com/ralphschindler/4757829
 
 ## Examples
 
-See the "example.php"!!!
+See the "examples" directory!!!
 
 ### Z\IdeStubGenerator\Strategy\PSR0
 
 ```php
-$stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\PSR0();
-// $stubgenerator_strategy->setBaseDir(...); 
-// $stubgenerator_strategy->setFunctionsStubFileName(...);
-// $stubgenerator_strategy->setConstantsStubFileName(...);
+$generator = new Z\IdeStubGenerator\Strategy\PSR0();
+$generator->setBaseDir(DIR_IN_TEMP.'/psr0/'); // required
+// $generator->setFunctionsStubFileName('functions.stub.php'); // optional. Default: 'functions.php'
+// $generator->setConstantsStubFileName('constants.stub.php'); // optional. Default: 'constants.php'
 
-$generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
-$generator->addClasses(array('class_name', ...));
-$generator->addFunctions(array('function_name', ...));
-$generator->addConstants(array('constant_name'=>constant_value, ...));
+// $generator->setClasses(array('class_name', ...)); // optional
+// $generator->setFunctions(array('function_name', ...)); // optional
+// $generator->setConstants(array('constant_name'=>constant_value, ...)); // optional
 $generator->generate();
 ```
 
 ### Z\IdeStubGenerator\Strategy\OneFile
 ```php
-$stubgenerator_strategy = new Z\IdeStubGenerator\Strategy\OneFile();
-$stubgenerator_strategy->setFilePath(...);
+$generator = new Z\IdeStubGenerator\Strategy\OneFile();
+$generator->setFilePath(DIR_IN_TEMP.'/onefile/example_onefile_stub.php'); // required
 
-
-$generator = new Z\IdeStubGenerator\Generator($stubgenerator_strategy);
-$generator->addClasses(array('class_name', ...));
-$generator->addFunctions(array('function_name', ...));
-$generator->addConstants(array('constant_name'=>constant_value, ...));
+// $generator->setClasses(array('class_name', ...)); // optional
+// $generator->setFunctions(array('function_name', ...)); // optional
+// $generator->setConstants(array('constant_name'=>constant_value, ...)); // optional
 $generator->generate();
 ```
 
 ## License
+
+ISC License (ISC)
 
 Copyright (c) 2014, Rácz Tibor Zoltán <racztiborzoltan+github@gmail.com>
 
