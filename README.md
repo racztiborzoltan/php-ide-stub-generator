@@ -1,4 +1,4 @@
-# PHP Ide Stub file Generator
+# PHP Ide Stub File Generator
 
 Simple stub file generator for development environments.
 
@@ -12,7 +12,7 @@ See the "examples" directory!!!
 
 ```php
 $generator = new Z\IdeStubGenerator\Strategy\PSR0();
-$generator->setBaseDir(DIR_IN_TEMP.'/psr0/'); // required
+$generator->setBaseDir(...); // required
 // $generator->setFunctionsStubFileName('functions.stub.php'); // optional. Default: 'functions.php'
 // $generator->setConstantsStubFileName('constants.stub.php'); // optional. Default: 'constants.php'
 
@@ -25,7 +25,7 @@ $generator->generate();
 ### Z\IdeStubGenerator\Strategy\OneFile
 ```php
 $generator = new Z\IdeStubGenerator\Strategy\OneFile();
-$generator->setFilePath(DIR_IN_TEMP.'/onefile/example_onefile_stub.php'); // required
+$generator->setFilePath(...); // required
 
 // $generator->setClasses(array('class_name', ...)); // optional
 // $generator->setFunctions(array('function_name', ...)); // optional
