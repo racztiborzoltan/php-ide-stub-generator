@@ -114,6 +114,10 @@ class PSR0 extends Generator
 
     private function _generateClasses()
     {
+        if (count($this->getClasses()) == 0) {
+            return;
+        }
+
         $template_variables = $this->getTemplateVariables();
         // ---------------------------------------
         // Process the classes:
@@ -161,6 +165,10 @@ class PSR0 extends Generator
      */
     private function _generateFunctions()
     {
+        if (count($this->getFunctions()) == 0) {
+            return;
+        }
+
         $template_variables = $this->getTemplateVariables();
         // ---------------------------------------
         // Process the functions:
@@ -197,6 +205,10 @@ class PSR0 extends Generator
      */
     private function _generateConstants()
     {
+        if (count($this->getConstants()) == 0) {
+            return;
+        }
+
         $template_variables = $this->getTemplateVariables();
         // ---------------------------------------
         // Process the constants:

@@ -87,6 +87,12 @@ class OneFile extends Generator
         }
         // ---------------------------------------
 
+        if (empty($template_variables['functions_by_namespace'])
+            || empty($template_variables['classes_by_namespace'])
+            || empty($template_variables['constants'])) {
+            return;
+        }
+
         $m = $this->createMustacheEngine();
         $template_path = realpath(__DIR__.'/../../templates/onefile/onefile.mustache');
         if (empty($template_path)) {
