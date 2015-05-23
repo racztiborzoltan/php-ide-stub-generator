@@ -1,82 +1,8 @@
 <?php
-// ============================================================================
-// Functions for this example:
-//
-// -----------------------------------------------
-function getDefinedClasses()
-{
-    $temp = include '../vendor/composer/autoload_classmap.php';
 
-    if (empty($temp))
-        exit('Please, use the follow command: composer dump-autoload -o');
-
-    $classes = array();
-    foreach ($temp as $class_name => $class_file_path)
-    {
-        if (strpos($class_file_path, 'src/Z/')!==false)
-            continue;
-
-        if (!class_exists($class_name))
-            require_once $class_file_path;
-
-        $classes[$class_name] = $class_file_path;
-    }
-
-    return array_keys($classes);
-}
-// -----------------------------------------------
-function getDefinedFunctions()
-{
-    $functions = get_defined_functions();
-    $functions = $functions['user'];
-    foreach ($functions as $key => $function_name)
-    {
-        $refl = new ReflectionFunction($function_name);
-        $function_name = $refl->getName();
-
-        if (strpos(strtolower($function_name), 'composer')!==false
-            || $refl->getFileName() === __FILE__
-            )
-            unset($functions[$key]);
-        else
-            $functions[$key] = $function_name;
-    }
-
-    return $functions;
-}
-// -----------------------------------------------
-function getDefinedConstants()
-{
-    $constants = get_defined_constants(true);
-    $constants = $constants['user'];
-    return $constants;
-}
-// -----------------------------------------------
-
-/**
- * recursively remove a directory
- *
- * Original source: http://php.net/manual/en/function.rmdir.php#108113
- *
- * @param string $dir
- */
-function rrmdir($dir) {
-    foreach(glob($dir . '/*') as $file) {
-        if(is_dir($file))
-            rrmdir($file);
-        else
-            unlink($file);
-    }
-    @rmdir($dir);
-}
-
-// ============================================================================
-
+require_once '../vendor/autoload.php';
 
 header('Content-Type: text/plain');
-
-// load Composer autoloader:
-require_once '../vendor/autoload.php';
 
 define('DIR_IN_TEMP', __DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/');
 
@@ -119,3 +45,82 @@ $generator->generate();
 
 echo PHP_EOL;echo PHP_EOL;
 echo 'End of example!!!';
+
+
+// ============================================================================
+// Functions for this example:
+//
+// -----------------------------------------------
+function getDefinedClasses()
+{
+    $temp = include '../vendor/composer/autoload_classmap.php';
+
+    if (empty($temp))
+        exit('Please, use the follow command: composer dump-autoload -o');
+
+    $classes = array();
+    foreach ($temp as $class_name => $class_file_path)
+    {
+        if (strpos($class_file_path, 'src/Z/')!==false)
+            continue;
+
+        if (!class_exists($class_name))
+            require_once $class_file_path;
+
+        $classes[$class_name] = $class_file_path;
+    }
+
+    return array_keys($classes);
+}
+// -----------------------------------------------
+function getDefinedFunctions()
+{
+    $functions = get_defined_functions();
+    $functions = $functions['user'];
+    foreach ($functions as $key => $function_name)
+    {
+        $refl = new ReflectionFunction($function_name);
+        $function_name = $refl->getName();
+
+        if (strpos(strtolower($function_name), 'composer')!==false
+            || $refl->getFileName() === __FILE__
+        )
+            unset($functions[$key]);
+        else
+            $functions[$key] = $function_name;
+    }
+
+    return $functions;
+}
+// -----------------------------------------------
+function getDefinedConstants()
+{
+    $constants = get_defined_constants(true);
+    $constants = $constants['user'];
+    foreach (array_keys($constants) as $constant_name) {
+        if (strpos($constant_name, 'TEST_') !== 0) {
+            unset($constants[$constant_name]);
+        }
+    }
+    return $constants;
+}
+// -----------------------------------------------
+
+/**
+ * recursively remove a directory
+ *
+ * Original source: http://php.net/manual/en/function.rmdir.php#108113
+ *
+ * @param string $dir
+ */
+function rrmdir($dir) {
+    foreach(glob($dir . '/*') as $file) {
+        if(is_dir($file))
+            rrmdir($file);
+        else
+            unlink($file);
+    }
+    @rmdir($dir);
+}
+
+// ============================================================================
