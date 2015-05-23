@@ -94,13 +94,13 @@ define('TEST_NULL', null);
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
 $generator = new Z\IdeStubGenerator\Strategy\PSR0();
-$generator->setBaseDir(DIR_IN_TEMP);
-$generator->setFunctionsStubFileName('functions.stub.php');
-$generator->setConstantsStubFileName('constants.stub.php');
+$generator->setBaseDir(DIR_IN_TEMP.'/psr0/'); // required
+$generator->setFunctionsStubFileName('functions.stub.php'); // optional. Default: 'functions.php'
+$generator->setConstantsStubFileName('constants.stub.php'); // optional. Default: 'constants.php'
 
-$generator->setClasses(getDefinedClasses());
-$generator->setFunctions(getDefinedFunctions());
-$generator->setConstants(getDefinedConstants());
+$generator->setClasses(getDefinedClasses()); // optional
+$generator->setFunctions(getDefinedFunctions()); // optional
+$generator->setConstants(getDefinedConstants()); // optional
 $generator->generate();
 // -----------------------------------------------
 
@@ -109,11 +109,11 @@ $generator->generate();
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
 $generator = new Z\IdeStubGenerator\Strategy\OneFile();
-$generator->setFilePath(DIR_IN_TEMP.'example_onefile_stub.php');
+$generator->setFilePath(DIR_IN_TEMP.'/onefile/example_onefile_stub.php'); // required
 
-$generator->setClasses(getDefinedClasses());
-$generator->setFunctions(getDefinedFunctions());
-$generator->setConstants(getDefinedConstants());
+$generator->setClasses(getDefinedClasses()); // optional
+$generator->setFunctions(getDefinedFunctions()); // optional
+$generator->setConstants(getDefinedConstants()); // optional
 $generator->generate();
 // -----------------------------------------------
 
