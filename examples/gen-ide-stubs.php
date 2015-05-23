@@ -52,12 +52,35 @@ function getDefinedConstants()
     return $constants;
 }
 // -----------------------------------------------
+
+/**
+ * recursively remove a directory
+ *
+ * Original source: http://php.net/manual/en/function.rmdir.php#108113
+ *
+ * @param string $dir
+ */
+function rrmdir($dir) {
+    foreach(glob($dir . '/*') as $file) {
+        if(is_dir($file))
+            rrmdir($file);
+        else
+            unlink($file);
+    }
+    @rmdir($dir);
+}
+
 // ============================================================================
+
 
 header('Content-Type: text/plain');
 
 // load Composer autoloader:
 require_once '../vendor/autoload.php';
+
+define('DIR_IN_TEMP', __DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/');
+
+rrmdir(DIR_IN_TEMP);
 
 define('TEST_INT', 100);
 define('TEST_BOOL', true);
@@ -71,7 +94,7 @@ define('TEST_NULL', null);
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
 $generator = new Z\IdeStubGenerator\Strategy\PSR0();
-$generator->setBaseDir(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/');
+$generator->setBaseDir(DIR_IN_TEMP);
 $generator->setFunctionsStubFileName('functions.stub.php');
 $generator->setConstantsStubFileName('constants.stub.php');
 
@@ -86,7 +109,7 @@ $generator->generate();
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
 $generator = new Z\IdeStubGenerator\Strategy\OneFile();
-$generator->setFilePath(__DIR__.'/../temp/'.pathinfo(__FILE__, PATHINFO_FILENAME).'/example_onefile_stub.php');
+$generator->setFilePath(DIR_IN_TEMP.'example_onefile_stub.php');
 
 $generator->setClasses(getDefinedClasses());
 $generator->setFunctions(getDefinedFunctions());

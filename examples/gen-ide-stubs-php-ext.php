@@ -2,6 +2,24 @@
 // load Composer autoloader:
 require_once '../vendor/autoload.php';
 
+/**
+ * recursively remove a directory
+ *
+ * Original source: http://php.net/manual/en/function.rmdir.php#108113
+ *
+ * @param string $dir
+ */
+function rrmdir($dir) {
+    foreach(glob($dir . '/*') as $file) {
+        if(is_dir($file))
+            rrmdir($file);
+        else
+            unlink($file);
+    }
+    @rmdir($dir);
+}
+
+
 if (php_sapi_name() == 'cli')  {
     if (empty($_SERVER['argv'][1])) {
         $extensions = get_loaded_extensions();
@@ -46,13 +64,19 @@ if (!empty($extension_version)) {
     $full_extension_name .= '-'.$extension_version;
 }
 
+
+define('DIR_IN_TEMP', __DIR__.'/../temp/'.$full_extension_name.'/');
+
+rrmdir(DIR_IN_TEMP);
+
+
 // -----------------------------------------------
 // Example 1:
 //      Z\IdeStubGenerator\Strategy\PSR0
 //
 $generator = new Z\IdeStubGenerator\Strategy\PSR0();
 
-$generator->setBaseDir(__DIR__.'/../temp/'.$full_extension_name.'/');
+$generator->setBaseDir(DIR_IN_TEMP.'/psr0/');
 $generator->setFunctionsStubFileName('functions.stub.php');
 $generator->setConstantsStubFileName('constants.stub.php');
 
@@ -68,7 +92,7 @@ $generator->generate();
 //      Z\IdeStubGenerator\Strategy\OneFile
 //
 $generator = new Z\IdeStubGenerator\Strategy\OneFile();
-$generator->setFilePath(__DIR__.'/../temp/'.$full_extension_name.'_onefile_stub.php');
+$generator->setFilePath(DIR_IN_TEMP . '/onefile/' . $full_extension_name . '_onefile_stub.php');
 
 $generator->setClasses(getDefinedClasses($extension_name));
 $generator->setFunctions(getDefinedFunctions($extension_name));
