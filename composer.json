@@ -16,8 +16,9 @@
     },
     "require-dev": {
 		"monolog/monolog": "1.*",
-		"rutkoski/simplify-functions": "dev-master",
-		"herrera-io/file-system-functions": "1.0.*@dev",
-		"lstrojny/functional-php": "1.0.*@dev"
-    }
+		"ircmaxell/password-compat": "1.0.4 "
+    },
+	"config": {
+		"preferred-install": "dist"
+	}
 }

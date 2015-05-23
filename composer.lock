@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4a54ee016308493dea57c17d739b987d",
+    "hash": "c5bb525ed6cc322a76f82f0a37009bee",
     "packages": [
         {
             "name": "mustache/mustache",
@@ -55,81 +55,26 @@
     ],
     "packages-dev": [
         {
-            "name": "herrera-io/file-system-functions",
-            "version": "dev-master",
+            "name": "ircmaxell/password-compat",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/kherge-unmaintained/php-fs-functions.git",
-                "reference": "a558f4bce31d78c427f2071f4645cd2b30e9512c"
+                "url": "https://github.com/ircmaxell/password_compat.git",
+                "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kherge-unmaintained/php-fs-functions/zipball/a558f4bce31d78c427f2071f4645cd2b30e9512c",
-                "reference": "a558f4bce31d78c427f2071f4645cd2b30e9512c",
+                "url": "https://api.github.com/repos/ircmaxell/password_compat/zipball/5c5cde8822a69545767f7c7f3058cb15ff84614c",
+                "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c",
                 "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/lib/fs_functions.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kevin Herrera",
-                    "email": "kevin@herrera.io",
-                    "homepage": "http://kevin.herrera.io"
-                }
-            ],
-            "description": "A collection of file system related functions.",
-            "homepage": "http://code.herrera.io/php-fs-functions",
-            "keywords": [
-                "file",
-                "functions"
-            ],
-            "time": "2013-11-08 18:25:49"
-        },
-        {
-            "name": "lstrojny/functional-php",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/lstrojny/functional-php.git",
-                "reference": "a8d8b62ed3fdabb934d130413e8bf21e856e187e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lstrojny/functional-php/zipball/a8d8b62ed3fdabb934d130413e8bf21e856e187e",
-                "reference": "a8d8b62ed3fdabb934d130413e8bf21e856e187e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4"
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
             "autoload": {
                 "files": [
-                    "src/Functional/_import.php"
+                    "lib/password.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -138,20 +83,18 @@
             ],
             "authors": [
                 {
-                    "name": "Lars Strojny",
-                    "email": "lstrojny@php.net",
-                    "homepage": "http://usrportage.de"
-                },
-                {
-                    "name": "Max Beutel",
-                    "email": "nash12@gmail.com"
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net",
+                    "homepage": "http://blog.ircmaxell.com"
                 }
             ],
-            "description": "Functional primitives for PHP",
+            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
+            "homepage": "https://github.com/ircmaxell/password_compat",
             "keywords": [
-                "functional"
+                "hashing",
+                "password"
             ],
-            "time": "2015-05-15 09:25:34"
+            "time": "2014-11-20 16:49:30"
         },
         {
             "name": "monolog/monolog",
@@ -263,56 +206,11 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
-        },
-        {
-            "name": "rutkoski/simplify-functions",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rutkoski/simplify-functions.git",
-                "reference": "466d93f798b80fd39d49a59c4760b2b6ab659467"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rutkoski/simplify-functions/zipball/466d93f798b80fd39d49a59c4760b2b6ab659467",
-                "reference": "466d93f798b80fd39d49a59c4760b2b6ab659467",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/functions.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL"
-            ],
-            "authors": [
-                {
-                    "name": "Rodrigo Rutkoski Rodrigues",
-                    "email": "rutkoski@gmail.com"
-                }
-            ],
-            "description": "Simplify PHP Framework",
-            "homepage": "https://github.com/rutkoski/simplify-functions",
-            "keywords": [
-                "framework",
-                "php"
-            ],
-            "time": "2015-04-07 17:00:54"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "rutkoski/simplify-functions": 20,
-        "herrera-io/file-system-functions": 20,
-        "lstrojny/functional-php": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
