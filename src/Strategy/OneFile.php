@@ -88,8 +88,8 @@ class OneFile extends Generator
         // ---------------------------------------
 
         if (empty($template_variables['functions_by_namespace'])
-            || empty($template_variables['classes_by_namespace'])
-            || empty($template_variables['constants'])) {
+            && empty($template_variables['classes_by_namespace'])
+            && empty($template_variables['constants'])) {
             return;
         }
 
