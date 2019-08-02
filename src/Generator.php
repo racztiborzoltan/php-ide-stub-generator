@@ -220,8 +220,10 @@ abstract class Generator
             $class_info['class_keyword'] = 'trait';
         }
 
-        if ($reflection->isAbstract()) {
-            $class_info['abstract'] = $reflection->isAbstract();
+        
+        // Interfaces return true for isAbstract
+        if (!$reflection->isInterface() && $reflection->isAbstract()) {
+           $class_info['abstract'] = $reflection->isAbstract();
         }
 
         if ($reflection->isFinal()) {
@@ -312,6 +314,8 @@ abstract class Generator
         foreach ($methods as $method) {
             $method_info = array();
 
+            $method_info['interface'] = $class_info['class_keyword'] === 'interface';
+            $method_info['endWithSemicolon'] = $method_info['interface'];
             $method_info['name'] = $method->getName();
 
             $doccomment = $method->getDocComment();
@@ -337,6 +341,11 @@ abstract class Generator
             if ($method->isStatic()) {
                 $method_info['static'] = $method->isStatic();
                 $scope[] = 'static';
+            }
+
+            if (!$method_info['interface'] && $method->isAbstract()) {
+                $method_info['abstractMethod'] = $method->isAbstract();
+                $method_info['endWithSemicolon'] = $method->isAbstract();
             }
 
             $scope = implode(' ', $scope);
