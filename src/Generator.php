@@ -10,6 +10,12 @@ namespace Z\IdeStubGenerator;
 abstract class Generator
 {
     /**
+     * Skip properties and methods inherited from parent classes, interfaces or traits
+     * @var bool
+     */
+    private $skipInheritedMembers = false;
+
+    /**
      * Class names for generation
      * Structure:
      * Array(
@@ -131,6 +137,22 @@ abstract class Generator
     public function setConstants(array $constants)
     {
         $this->constants = $constants;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSkipInheritedMembers()
+    {
+        return $this->skipInheritedMembers;
+    }
+
+    /**
+     * @param bool $skipInheritedMembers
+     */
+    public function setSkipInheritedMembers($skipInheritedMembers)
+    {
+        $this->skipInheritedMembers = $skipInheritedMembers;
     }
 
     /**
@@ -262,6 +284,9 @@ abstract class Generator
         }
         ksort($properties);
         foreach ($properties as $property) {
+            if($this->isSkipInheritedMembers() && $property->class !== $reflection->getName()) {
+                continue;
+            }
 
             $property_info = array();
             $property_info['name'] = $property->getName();
@@ -308,6 +333,9 @@ abstract class Generator
 
         $methods = array();
         foreach ($reflection->getMethods() as $method) {
+            if($this->isSkipInheritedMembers() && $property->class !== $reflection->getName()) {
+                continue;
+            }
             $methods[$method->getName()] = $method;
         }
         ksort($methods);
