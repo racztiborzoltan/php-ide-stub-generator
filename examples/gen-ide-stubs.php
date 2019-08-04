@@ -64,8 +64,9 @@ function getDefinedClasses()
         if (strpos($class_file_path, 'src/Z/')!==false)
             continue;
 
-        if (!class_exists($class_name))
+        if (!class_exists($class_name) && !interface_exists($class_name) && !trait_exists($class_name)) {
             require_once $class_file_path;
+        }
 
         $classes[$class_name] = $class_file_path;
     }
