@@ -6,7 +6,7 @@ namespace {{ namespace }}{
 {{# doccomment }}
 {{{ . | indent.tab_1 }}}
 {{/ doccomment }}
-	{{class_keyword}} {{short_name}}{{#extends}} extends {{.}}{{/extends}}{{#implements_string}} implements {{.}}{{/implements_string}}
+	{{#abstract}}abstract {{/abstract}}{{class_keyword}} {{short_name}}{{#extends}} extends {{.}}{{/extends}}{{#implements_string}} implements {{.}}{{/implements_string}}
 	{
 	{{# .constants }}
 	    const {{name}} = {{value}};
@@ -26,7 +26,7 @@ namespace {{ namespace }}{
 {{# doccomment }}
 {{{ . | indent.tab_2 }}}
 {{/ doccomment }}
-		function {{#returnsReference}}&{{/returnsReference}}{{ name }}({{# parameters}}{{#typeHint}}{{.}} {{/typeHint}}${{ name }}{{#defaultValue}} = {{.}}{{/defaultValue}}{{#comma}}, {{/comma}}{{/ parameters}}){}
+		{{#abstractMethod}}abstract {{/abstractMethod}}{{{ scope }}} function {{#returnsReference}}&{{/returnsReference}}{{ name }}({{# parameters}}{{#typeHint}}{{.}} {{/typeHint}}${{ name }}{{#defaultValue}} = {{{.}}}{{/defaultValue}}{{#comma}}, {{/comma}}{{/ parameters}}){{#endWithSemicolon}};{{/endWithSemicolon}}{{^endWithSemicolon}}{}{{/endWithSemicolon}}
 	{{/ methods }}
 
 	}
