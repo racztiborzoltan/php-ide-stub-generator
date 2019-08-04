@@ -16,7 +16,7 @@
     },
     "require-dev": {
 		"monolog/monolog": "1.*",
-		"ircmaxell/password-compat": "1.0.4 "
+		"ircmaxell/password-compat": "1.0.4"
     },
 	"config": {
 		"preferred-install": "dist"
