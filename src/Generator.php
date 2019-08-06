@@ -327,7 +327,6 @@ abstract class Generator
                 $property_info['scope'] = $scope;
             }
 
-
             $propertyDoc = $property->getDocComment();
             $propertyDoc = $this->replaceDocTypes($propertyDoc, $useStatements, 'var');
             if ($propertyDoc !== false) {
@@ -403,13 +402,13 @@ abstract class Generator
         return $class_info;
     }
 
-	/**
-	 * @param        $docComment
-	 * @param        $useStatements
-	 * @param string $phpDocType Can be var, param, method
-	 *
-	 * @return string|string[]|null
-	 */
+    /**
+     * @param        $docComment
+     * @param        $useStatements
+     * @param string $phpDocType Can be var, param, method
+     *
+     * @return string|string[]|null
+     */
     private function replaceDocTypes($docComment, $useStatements, $phpDocType = 'var') {
         $regexPrefix = "\*\s*@{$phpDocType}\s+";
         $regex = "#{$regexPrefix}([\w\[\]\\\\|]+)\s*#";
