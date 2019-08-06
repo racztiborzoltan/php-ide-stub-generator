@@ -460,7 +460,7 @@ abstract class Generator
         			$replacedWith[] = '\1\\' . $useType;
         			// After an attribute or |
         			$replacedTypes[] = "#\|$type#";
-        			$replacedWith[] = '|'.$useType;
+        			$replacedWith[] = '|\\'.$useType;
         		}
         		$docComment = \preg_replace($replacedTypes, $replacedWith, $docComment);
         	}
