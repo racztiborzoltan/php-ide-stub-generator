@@ -409,81 +409,82 @@ abstract class Generator
      *
      * @return string|string[]|null
      */
-    private function replaceDocTypes($docComment, $useStatements, $phpDocType = 'var') {
+        private function replaceDocTypes($docComment, $useStatements, $phpDocType = 'var') {
         $regexPrefix = "\*\s*@{$phpDocType}\s+";
         $regex = "#{$regexPrefix}([\w\[\]\\\\|]+)\s*#";
         if (\preg_match_all($regex, $docComment, $matches)) {
-        	$types = [];
-        	foreach($matches[1] as $match) {
-        		$types = array_merge($types, \explode('|', $match));
-        	}
-        	$types = \array_unique($types);
-        	$foundReplacements = [];
-        	foreach ($types as $type) {
-        		// Remove the array type annotation, e.g. @var string[]
-        		if (\strpos($type, '[]') !== false) {
-        			$type = \str_replace('[]', '', $type);
-        		}
-        
-        		// Use statements end with a semicolon
-        		$useStatementEnding = '\\' . $type . ';';
-        		$globalNamespaceUse = "use {$type};";
-        		$useAlias = "as {$type};";
-        		foreach ($useStatements as $useStatement) {
-        			$useStatement = trim($useStatement);
-        			$endsWith = substr_compare($useStatement, $useStatementEnding, -strlen($useStatementEnding)) === 0;
-        			if ($endsWith) {
-        				// If a replacement was found already and the found one is more specific (longer), use it
-        				if (isset($foundReplacements[$type]) && \strlen($foundReplacements[$type]) > \strlen($useStatement)) {
-        					continue;
-        				}
-        				// Otherwise replace it with a longer one
-        				$foundReplacements[$type] = $useStatement;
-        			} else if (substr_compare($useStatement, $globalNamespaceUse, -strlen($globalNamespaceUse)) === 0) {
-        				// If it is a class from the global namespace, change the use statement
-        				$foundReplacements[$type] = "use \\{$type};";
-        			} else if (substr_compare($useStatement, $useAlias, -strlen($useAlias)) === 0) {
-        				// If it is a class from the global namespace, change the use statement
-        				list($namespace, $alias) = \explode(' as ', $useStatement);
-        				$foundReplacements[$type] = "{$namespace};";
-        			}
-        		}
-        	}
-        	if ($foundReplacements) {
-        		$replacedTypes = [];
-        		$replacedWith = [];
-        		foreach($foundReplacements as $type => $useStatement) {
-        			// Directly after a PHPDoc attributes
-        			$replacedTypes[] = "#({$regexPrefix})$type#";
-        			list($_, $useType) = \explode(' ', $useStatement);
-        			$useType = \str_replace(';', '', $useType);
-        			$replacedWith[] = '\1\\' . $useType;
-        			// After an attribute or |
-        			$replacedTypes[] = "#\|$type#";
-        			$replacedWith[] = '|\\'.$useType;
-        		}
-        		$docComment = \preg_replace($replacedTypes, $replacedWith, $docComment);
-        	}
+            $types = [];
+            foreach($matches[1] as $match) {
+                $types = array_merge($types, \explode('|', $match));
+            }
+            $types = \array_unique($types);
+            $foundReplacements = [];
+            foreach ($types as $type) {
+                // Remove the array type annotation, e.g. @var string[]
+                if (\strpos($type, '[]') !== false) {
+                    $type = \str_replace('[]', '', $type);
+                }
+
+                foreach ($useStatements as $useStatement) {
+                    $namespace = $useStatement['ns'];
+                    $alias = $useStatement['as'];
+                    if ($alias === $type) {
+                        // If a replacement was found already and the found one is more specific (longer), use it
+                        if (isset($foundReplacements[$type]) && \strlen($foundReplacements[$type]) > \strlen($namespace)) {
+                            continue;
+                        }
+                        // Otherwise replace it with a longer one
+                        $foundReplacements[$type] = $namespace;
+                    }
+                }
+            }
+            if ($foundReplacements) {
+                $replacedTypes = [];
+                $replacedWith = [];
+                foreach($foundReplacements as $type => $namespace) {
+                    // Directly after a PHPDoc attributes
+                    $replacedTypes[] = "#({$regexPrefix})$type#";
+                    $replacedWith[] = '\1\\' . $namespace;
+                    // After an attribute or |
+                    $replacedTypes[] = "#\|$type#";
+                    $replacedWith[] = '|\\'.$namespace;
+                }
+                $docComment = \preg_replace($replacedTypes, $replacedWith, $docComment);
+            }
         }
         return $docComment;
     }
-    
-	/**
-	 * Extracts the use statements from a class file.
-	 *
-	 * @param \ReflectionClass $class_reflection
-	 *
-	 * @return string[]
-	 */
+
+    /**
+     * Extracts the use statements from a class file.
+     *
+     * @param \ReflectionClass $class_reflection
+     *
+     * @return string[]
+     */
     private function extractUseBlocks(\ReflectionClass $class_reflection) {
         $source = \file_get_contents($class_reflection->getFileName());
-        $useRegex = '/use\s+[\w\\\\]+(?:\s+as\s+\w+)?;/';
+        $useRegex = '/use\s+([\w\\\\]+)(?:\s+as\s+(\w+))?;/';
         $matches = array();
+        $namespaces = [];
         \preg_match_all($useRegex, $source, $matches);
         if (isset($matches[0]) && \is_array($matches[0])) {
-        	$matches = $matches[0];
+            foreach($matches[0] as $index => $match) {
+                $namespace = $matches[1][$index];
+                $as = null;
+                if (isset($matches[2][$index]) && $matches[2][$index]) {
+                    $as = $matches[2][$index];
+                } else {
+                    $as = \array_pop(explode('\\', $namespace));
+                }
+                $namespaces[] = [
+                    'ns' => trim($namespace),
+                    'as' => trim($as)
+                ];
+            }
         }
-        return $matches;
+
+        return $namespaces;
     }
     
     /**
