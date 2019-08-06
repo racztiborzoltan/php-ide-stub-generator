@@ -340,7 +340,7 @@ abstract class Generator
 
         $methods = array();
         foreach ($reflection->getMethods() as $method) {
-            if($this->isSkipInheritedMembers() && $property->class !== $reflection->getName()) {
+            if($this->isSkipInheritedMembers() && $method->class !== $reflection->getName()) {
                 continue;
             }
             $methods[$method->getName()] = $method;
