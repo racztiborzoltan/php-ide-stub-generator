@@ -246,7 +246,7 @@ abstract class Generator
             $class_info['class_keyword'] = 'trait';
         }
 
-        
+
         // Interfaces return true for isAbstract
         if (!$reflection->isInterface() && $reflection->isAbstract()) {
            $class_info['abstract'] = $reflection->isAbstract();
@@ -475,7 +475,8 @@ abstract class Generator
                 if (isset($matches[2][$index]) && $matches[2][$index]) {
                     $as = $matches[2][$index];
                 } else {
-                    $as = \array_pop(explode('\\', $namespace));
+                    $as = explode('\\', $namespace);
+                    $as = \array_pop($as);
                 }
                 $namespaces[] = [
                     'ns' => trim($namespace),
@@ -486,7 +487,7 @@ abstract class Generator
 
         return $namespaces;
     }
-    
+
     /**
      * Get informations about a function
      *
