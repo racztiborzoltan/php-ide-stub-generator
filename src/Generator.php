@@ -230,9 +230,13 @@ abstract class Generator
         $class_info['short_name'] = $reflection->getShortName();
         $class_info['namespace'] = $reflection->getNamespaceName();
 
+        $useStatements = $this->extractUseBlocks($reflection);
         $doccomment = $reflection->getDocComment();
+        $doccomment = $this->replaceDocTypes($doccomment, $useStatements, 'method');
+        $doccomment = $this->replaceDocTypes($doccomment, $useStatements, 'property-read');
+        $doccomment = $this->replaceDocTypes($doccomment, $useStatements, 'property');
         if (!empty($doccomment)) {
-            $class_info['doccomment'] = $reflection->getDocComment();
+            $class_info['doccomment'] = $doccomment;
         }
 
         $class_info['class_keyword'] = 'class';
@@ -323,9 +327,12 @@ abstract class Generator
                 $property_info['scope'] = $scope;
             }
 
-            $doccoment = $property->getDocComment();
-            if ($doccoment !== false) {
-                $property_info['doccomment'] = $property->getDocComment();
+            $propertyDoc = $property->getDocComment();
+            $propertyDoc = $this->replaceDocTypes($propertyDoc, $useStatements, 'var');
+            if ($propertyDoc !== false) {
+                $property_info['doccomment'] = $propertyDoc;
+            }else{
+                $property_info['doccomment'] = ' ';
             }
 
             $class_info['properties'][] = $property_info;
@@ -333,7 +340,7 @@ abstract class Generator
 
         $methods = array();
         foreach ($reflection->getMethods() as $method) {
-            if($this->isSkipInheritedMembers() && $property->class !== $reflection->getName()) {
+            if($this->isSkipInheritedMembers() && $method->class !== $reflection->getName()) {
                 continue;
             }
             $methods[$method->getName()] = $method;
@@ -347,6 +354,8 @@ abstract class Generator
             $method_info['name'] = $method->getName();
 
             $doccomment = $method->getDocComment();
+            $doccomment = $this->replaceDocTypes($doccomment, $useStatements, 'param');
+            $doccomment = $this->replaceDocTypes($doccomment, $useStatements, 'return');
             if ($doccomment !== false) {
                 $method_info['doccomment'] = $doccomment;
             }
@@ -393,6 +402,91 @@ abstract class Generator
         return $class_info;
     }
 
+    /**
+     * @param        $docComment
+     * @param        $useStatements
+     * @param string $phpDocType Can be var, param, method
+     *
+     * @return string|string[]|null
+     */
+        private function replaceDocTypes($docComment, $useStatements, $phpDocType = 'var') {
+        $regexPrefix = "\*\s*@{$phpDocType}\s+";
+        $regex = "#{$regexPrefix}([\w\[\]\\\\|]+)\s*#";
+        if (\preg_match_all($regex, $docComment, $matches)) {
+            $types = [];
+            foreach($matches[1] as $match) {
+                $types = array_merge($types, \explode('|', $match));
+            }
+            $types = \array_unique($types);
+            $foundReplacements = [];
+            foreach ($types as $type) {
+                // Remove the array type annotation, e.g. @var string[]
+                if (\strpos($type, '[]') !== false) {
+                    $type = \str_replace('[]', '', $type);
+                }
+
+                foreach ($useStatements as $useStatement) {
+                    $namespace = $useStatement['ns'];
+                    $alias = $useStatement['as'];
+                    if ($alias === $type) {
+                        // If a replacement was found already and the found one is more specific (longer), use it
+                        if (isset($foundReplacements[$type]) && \strlen($foundReplacements[$type]) > \strlen($namespace)) {
+                            continue;
+                        }
+                        // Otherwise replace it with a longer one
+                        $foundReplacements[$type] = $namespace;
+                    }
+                }
+            }
+            if ($foundReplacements) {
+                $replacedTypes = [];
+                $replacedWith = [];
+                foreach($foundReplacements as $type => $namespace) {
+                    // Directly after a PHPDoc attributes
+                    $replacedTypes[] = "#({$regexPrefix})$type#";
+                    $replacedWith[] = '\1\\' . $namespace;
+                    // After an attribute or |
+                    $replacedTypes[] = "#\|$type#";
+                    $replacedWith[] = '|\\'.$namespace;
+                }
+                $docComment = \preg_replace($replacedTypes, $replacedWith, $docComment);
+            }
+        }
+        return $docComment;
+    }
+
+    /**
+     * Extracts the use statements from a class file.
+     *
+     * @param \ReflectionClass $class_reflection
+     *
+     * @return string[]
+     */
+    private function extractUseBlocks(\ReflectionClass $class_reflection) {
+        $source = \file_get_contents($class_reflection->getFileName());
+        $useRegex = '/use\s+([\w\\\\]+)(?:\s+as\s+(\w+))?;/';
+        $matches = array();
+        $namespaces = [];
+        \preg_match_all($useRegex, $source, $matches);
+        if (isset($matches[0]) && \is_array($matches[0])) {
+            foreach($matches[0] as $index => $match) {
+                $namespace = $matches[1][$index];
+                $as = null;
+                if (isset($matches[2][$index]) && $matches[2][$index]) {
+                    $as = $matches[2][$index];
+                } else {
+                    $as = \array_pop(explode('\\', $namespace));
+                }
+                $namespaces[] = [
+                    'ns' => trim($namespace),
+                    'as' => trim($as)
+                ];
+            }
+        }
+
+        return $namespaces;
+    }
+    
     /**
      * Get informations about a function
      *
